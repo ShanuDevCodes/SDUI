@@ -30,7 +30,8 @@ object ScreenMapper {
             schemaVersion = dto.schemaVersion,
             title = dto.title ?: "",
             root = mapComponent(dto.root),
-            theme = dto.theme
+            theme = dto.theme,
+            initialState = dto.initialState
         )
     }
 
@@ -85,6 +86,7 @@ object ScreenMapper {
             "Card" -> SduiNode.CardNode(
                 elevation = dto.intProp("elevation", 1),
                 shape = dto.stringProp("shape"),
+                radius = dto.intProp("radius", 8),
                 children = children,
                 modifiers = modifiers
             )
@@ -92,6 +94,11 @@ object ScreenMapper {
                 color = dto.stringProp("color"),
                 elevation = dto.intProp("elevation", 0),
                 shape = dto.stringProp("shape"),
+                radius = dto.intProp("radius", 0),
+                contentColor = dto.stringProp("contentColor"),
+                shadowElevation = dto.intProp("shadowElevation", 0),
+                borderWidth = dto.intProp("borderWidth", 0),
+                borderColor = dto.stringProp("borderColor"),
                 children = children,
                 modifiers = modifiers
             )
@@ -163,6 +170,12 @@ object ScreenMapper {
                 children = children,
                 modifiers = modifiers
             )
+            "LazyGrid" -> SduiNode.LazyGridNode(
+                columns = dto.intProp("columns", 2),
+                space = dto.intProp("space", 0),
+                children = children,
+                modifiers = modifiers
+            )
             "Conditional" -> {
                 val thenComp = dto.props["then"]?.let {
                     try {
@@ -193,6 +206,31 @@ object ScreenMapper {
                 operator = dto.stringProp("operator"),
                 compareValueStr = dto.props["compareValue"]?.toString(),
                 children = children,
+                modifiers = modifiers
+            )
+            "Scaffold" -> SduiNode.ScaffoldNode(
+                topBarTitle = dto.stringProp("topBarTitle"),
+                topBarNavigationIcon = dto.stringProp("topBarNavigationIcon"),
+                showTopBar = dto.booleanProp("showTopBar", false),
+                children = children,
+                modifiers = modifiers
+            )
+            "IconButton" -> SduiNode.IconButtonNode(
+                icon = dto.stringProp("icon"),
+                contentDescription = dto.stringProp("contentDescription"),
+                enabled = dto.booleanProp("enabled", true),
+                onClick = dto.actions["onClick"]?.let { mapAction(it) },
+                modifiers = modifiers
+            )
+            "CircularProgress" -> SduiNode.CircularProgressNode(
+                progress = dto.props["progress"]?.jsonPrimitive?.floatOrNull ?: -1f,
+                color = dto.stringProp("color"),
+                modifiers = modifiers
+            )
+            "LinearProgress" -> SduiNode.LinearProgressNode(
+                progress = dto.props["progress"]?.jsonPrimitive?.floatOrNull ?: -1f,
+                color = dto.stringProp("color"),
+                trackColor = dto.stringProp("trackColor"),
                 modifiers = modifiers
             )
             else -> SduiNode.FallbackNode(
@@ -241,6 +279,38 @@ object ScreenMapper {
         )
     }
 
+    fun mapActionToDto(action: SduiAction): SduiActionDto {
+        return SduiActionDto(
+            type = action.type,
+            route = action.route,
+            params = action.params,
+            url = action.url,
+            stateKey = action.stateKey,
+            value = action.valueStr?.let { Json.parseToJsonElement(it) },
+            endpoint = action.endpoint,
+            method = action.method,
+            body = action.bodyStr?.let { Json.parseToJsonElement(it) },
+            onSuccess = action.onSuccess?.let { mapActionToDto(it) },
+            onError = action.onError?.let { mapActionToDto(it) },
+            message = action.message,
+            actionLabel = action.actionLabel,
+            onAction = action.onAction?.let { mapActionToDto(it) },
+            title = action.title,
+            confirmText = action.confirmText,
+            dismissText = action.dismissText,
+            onConfirm = action.onConfirm?.let { mapActionToDto(it) },
+            onDismiss = action.onDismiss?.let { mapActionToDto(it) },
+            name = action.name,
+            payload = action.payload,
+            actions = action.actions.map { mapActionToDto(it) },
+            eventName = action.eventName,
+            operator = action.operator,
+            compareValue = action.compareValueStr?.let { Json.parseToJsonElement(it) },
+            thenAction = action.thenAction?.let { mapActionToDto(it) },
+            elseAction = action.elseAction?.let { mapActionToDto(it) }
+        )
+    }
+
     fun mapStyle(dto: SduiStyleDto): SduiStyle {
         return SduiStyle(
             fontSize = dto.fontSize,
@@ -249,7 +319,10 @@ object ScreenMapper {
             color = dto.color,
             textAlign = dto.textAlign,
             maxLines = dto.maxLines,
-            overflow = dto.overflow
+            overflow = dto.overflow,
+            letterSpacing = dto.letterSpacing,
+            lineHeight = dto.lineHeight,
+            textDecoration = dto.textDecoration
         )
     }
 }

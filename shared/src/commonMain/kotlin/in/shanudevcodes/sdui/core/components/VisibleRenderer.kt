@@ -1,5 +1,7 @@
 package `in`.shanudevcodes.sdui.core.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,9 +29,11 @@ fun VisibleRenderer(
 
     val isVisible = ConditionEvaluator.evaluate(stateValue, operator, compareValue)
 
-    if (isVisible) {
-        component.children.forEach { child ->
-            SduiRenderer(child, stateHolder, modifier)
+    AnimatedVisibility(visible = isVisible) {
+        Column {
+            component.children.forEach { child ->
+                SduiRenderer(child, stateHolder, modifier)
+            }
         }
     }
 }

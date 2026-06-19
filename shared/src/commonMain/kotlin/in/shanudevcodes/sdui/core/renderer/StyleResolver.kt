@@ -27,7 +27,10 @@ object StyleResolver {
             color = style.color,
             textAlign = style.textAlign,
             maxLines = style.maxLines,
-            overflow = style.overflow
+            overflow = style.overflow,
+            letterSpacing = style.letterSpacing,
+            lineHeight = style.lineHeight,
+            textDecoration = style.textDecoration
         )
         return resolve(dto)
     }

@@ -36,13 +36,7 @@ class SduiScreenViewModel(
         when (event) {
             is SduiScreenEvent.LoadScreen -> loadScreen()
             is SduiScreenEvent.OnAction -> {
-                viewModelScope.launch(dispatcher) {
-                    if (event.action.type == "Navigate" && event.action.route != null) {
-                        _uiEvent.emit(SduiScreenUiEvent.NavigateTo(event.action.route, event.action.params))
-                    } else if (event.action.message != null) {
-                        _uiEvent.emit(SduiScreenUiEvent.ShowSnackbar(event.action.message))
-                    }
-                }
+                // Action routing is handled by ActionDispatcher in SduiScreenComposable
             }
             is SduiScreenEvent.OnStateChange -> {
                 // Handled at the screen stateHolder level or VM level if needed

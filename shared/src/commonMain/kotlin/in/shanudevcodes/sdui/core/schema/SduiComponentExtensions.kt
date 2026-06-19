@@ -33,6 +33,14 @@ fun SduiComponentDto.action(key: String): SduiActionDto? {
 }
 
 /**
+ * Extension helper to read a string property and resolve {{template}} placeholders against state.
+ */
+fun SduiComponentDto.resolvedStringProp(key: String, state: Map<String, kotlinx.serialization.json.JsonElement>, default: String = ""): String {
+    val raw = stringProp(key, default)
+    return `in`.shanudevcodes.sdui.core.state.TemplateResolver.resolve(raw, state)
+}
+
+/**
  * Extension helper to retrieve and decode style property from props.
  */
 fun SduiComponentDto.styleProp(): SduiStyleDto? {

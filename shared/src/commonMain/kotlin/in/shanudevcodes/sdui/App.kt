@@ -1,7 +1,6 @@
 package `in`.shanudevcodes.sdui
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -25,7 +24,7 @@ fun App() {
     remember {
         SduiEngine.initialize(
             config = SduiConfig(
-                baseUrl = "http://localhost:8085/",
+                baseUrl = "http://10.107.4.227:8085/",
                 defaultHeaders = emptyMap()
             )
         )
@@ -41,11 +40,10 @@ fun App() {
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
             modifier = Modifier.fillMaxSize()
-        ) { paddingValues ->
+        ) {innerPadding->
             Surface(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
             ) {
                 SduiNavDisplay(
                     backStack = backStack,

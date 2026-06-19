@@ -7,7 +7,6 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import `in`.shanudevcodes.sdui.core.state.SduiStateHolder
 import `in`.shanudevcodes.sdui.feature.screen.domain.repository.ScreenRepository
 import `in`.shanudevcodes.sdui.feature.screen.presentation.SduiScreenComposable
 import `in`.shanudevcodes.sdui.feature.screen.presentation.SduiScreenViewModel
@@ -29,8 +28,6 @@ fun SduiNavDisplay(
     onShowSnackbar: (message: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val sharedStateHolder = remember { SduiStateHolder() }
-
     NavDisplay(
         backStack = backStack,
         entryDecorators = listOf(
@@ -45,7 +42,6 @@ fun SduiNavDisplay(
                     viewModel = viewModel,
                     onNavigate = onNavigate,
                     onShowSnackbar = onShowSnackbar,
-                    stateHolder = sharedStateHolder,
                     modifier = modifier
                 )
             }
