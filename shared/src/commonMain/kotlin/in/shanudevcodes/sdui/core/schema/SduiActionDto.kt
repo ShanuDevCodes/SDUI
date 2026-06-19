@@ -30,5 +30,9 @@ data class SduiActionDto(
     val name: String? = null,
     val payload: Map<String, String> = emptyMap(),
     val actions: List<SduiActionDto> = emptyList(),
-    val eventName: String? = null
+    val eventName: String? = null,
+    val operator: String? = null,
+    val compareValue: JsonElement? = null,
+    val thenAction: SduiActionDto? = null,
+    val elseAction: SduiActionDto? = null
 )

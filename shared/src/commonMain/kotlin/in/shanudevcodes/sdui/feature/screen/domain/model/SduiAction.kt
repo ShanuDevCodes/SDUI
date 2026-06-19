@@ -26,5 +26,9 @@ data class SduiAction(
     val name: String? = null,
     val payload: Map<String, String> = emptyMap(),
     val actions: List<SduiAction> = emptyList(),
-    val eventName: String? = null
+    val eventName: String? = null,
+    val operator: String? = null,
+    val compareValueStr: String? = null,
+    val thenAction: SduiAction? = null,
+    val elseAction: SduiAction? = null
 )

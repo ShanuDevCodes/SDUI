@@ -76,6 +76,7 @@ kotlin {
             implementation(libs.kotlin.test)
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)
+            implementation(libs.ktor.client.mock)
         }
         iosMain.dependencies {
             //ktor-client-darwin

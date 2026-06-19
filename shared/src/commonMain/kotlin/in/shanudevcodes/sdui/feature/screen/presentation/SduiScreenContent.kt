@@ -7,6 +7,7 @@ import `in`.shanudevcodes.sdui.core.renderer.LocalSduiActionHandler
 import `in`.shanudevcodes.sdui.core.renderer.SduiRenderer
 import `in`.shanudevcodes.sdui.core.schema.SduiComponentDto
 import `in`.shanudevcodes.sdui.core.state.SduiStateHolder
+import `in`.shanudevcodes.sdui.core.theme.SduiThemeResolver
 import `in`.shanudevcodes.sdui.feature.screen.data.mapper.ScreenMapper
 import `in`.shanudevcodes.sdui.feature.screen.domain.model.ScreenDefinition
 import `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiAction
@@ -22,12 +23,14 @@ fun SduiScreenContent(
     modifier: Modifier = Modifier
 ) {
     val rootDto = mapNodeToDto(definition.root)
-    CompositionLocalProvider(
-        LocalSduiActionHandler provides { actionDto ->
-            onAction(ScreenMapper.mapAction(actionDto))
+    SduiThemeResolver.SduiTheme(theme = definition.theme) {
+        CompositionLocalProvider(
+            LocalSduiActionHandler provides { actionDto ->
+                onAction(ScreenMapper.mapAction(actionDto))
+            }
+        ) {
+            SduiRenderer(component = rootDto, stateHolder = stateHolder, modifier = modifier)
         }
-    ) {
-        SduiRenderer(component = rootDto, stateHolder = stateHolder, modifier = modifier)
     }
 }
 
@@ -60,7 +63,11 @@ private fun mapNodeToDto(node: `in`.shanudevcodes.sdui.feature.screen.domain.mod
             name = action.name,
             payload = action.payload,
             actions = action.actions.map { mapActionToDto(it) },
-            eventName = action.eventName
+            eventName = action.eventName,
+            operator = action.operator,
+            compareValue = action.compareValueStr?.let { json.parseToJsonElement(it) },
+            thenAction = action.thenAction?.let { mapActionToDto(it) },
+            elseAction = action.elseAction?.let { mapActionToDto(it) }
         )
     }
 

@@ -29,7 +29,8 @@ object ScreenMapper {
             screenId = dto.screenId,
             schemaVersion = dto.schemaVersion,
             title = dto.title ?: "",
-            root = mapComponent(dto.root)
+            root = mapComponent(dto.root),
+            theme = dto.theme
         )
     }
 
@@ -232,7 +233,11 @@ object ScreenMapper {
             name = dto.name,
             payload = dto.payload,
             actions = dto.actions.map { mapAction(it) },
-            eventName = dto.eventName
+            eventName = dto.eventName,
+            operator = dto.operator,
+            compareValueStr = dto.compareValue?.toString(),
+            thenAction = dto.thenAction?.let { mapAction(it) },
+            elseAction = dto.elseAction?.let { mapAction(it) }
         )
     }
 

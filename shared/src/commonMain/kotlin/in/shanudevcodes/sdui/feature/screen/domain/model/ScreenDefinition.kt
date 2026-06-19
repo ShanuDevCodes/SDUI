@@ -7,5 +7,6 @@ data class ScreenDefinition(
     val screenId: String,
     val schemaVersion: String,
     val title: String,
-    val root: SduiNode
+    val root: SduiNode,
+    val theme: Map<String, String> = emptyMap()
 )
