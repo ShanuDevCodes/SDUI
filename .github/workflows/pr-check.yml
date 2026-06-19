@@ -1,0 +1,31 @@
+name: PR Check (fast signal)
+
+on:
+  pull_request:
+    branches: [ main, master, develop ]
+  push:
+    branches: [ main, master, develop ]
+
+jobs:
+  build-and-test:
+    name: Build + Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Build (Android + Desktop + compile check)
+        run: ./gradlew compileKotlinMetadata :androidApp:compileDebugKotlin :desktopApp:compileKotlin --console=plain
+
+      - name: Run commonTest (desktop JVM — fast)
+        run: ./gradlew :shared:jvmTest --console=plain
