@@ -1,4 +1,4 @@
-package `in`.shanudevcodes.sdui
+package `in`.shanudevcodes.sdui.core.platform
 
 import platform.UIKit.UIDevice
 

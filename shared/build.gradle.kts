@@ -42,7 +42,7 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
 
             //ktor-client-okhttp
-            implementation("io.ktor:ktor-client-okhttp:3.2.3")
+            implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -55,19 +55,23 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
             //ktor
-            implementation("io.ktor:ktor-client-core:3.2.3")
-            implementation("io.ktor:ktor-client-content-negotiation:3.2.3")
-            implementation("io.ktor:ktor-serialization-kotlinx-json:3.2.3")
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
 
             //kotlinx-serialization
-            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+            implementation(libs.kotlinx.serialization.json)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
         iosMain.dependencies {
             //ktor-client-darwin
-            implementation("io.ktor:ktor-client-darwin:3.2.3")
+            implementation(libs.ktor.client.darwin)
+        }
+        jvmMain.dependencies {
+            //ktor-client-okhttp
+            implementation(libs.ktor.client.okhttp)
         }
     }
 }
