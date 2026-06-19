@@ -47,6 +47,8 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
+            implementation(libs.compose.material)
+            implementation(libs.compose.material.icons)
             implementation(libs.compose.material3)
             implementation(libs.compose.ui)
             implementation(libs.compose.components.resources)
@@ -61,9 +63,15 @@ kotlin {
 
             //kotlinx-serialization
             implementation(libs.kotlinx.serialization.json)
+
+            // Coil for image loading
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+            implementation(compose.uiTest)
         }
         iosMain.dependencies {
             //ktor-client-darwin
@@ -72,6 +80,9 @@ kotlin {
         jvmMain.dependencies {
             //ktor-client-okhttp
             implementation(libs.ktor.client.okhttp)
+        }
+        jvmTest.dependencies {
+            implementation(compose.desktop.currentOs)
         }
     }
 }

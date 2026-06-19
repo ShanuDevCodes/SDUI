@@ -31,3 +31,16 @@ fun SduiComponentDto.booleanProp(key: String, default: Boolean = false): Boolean
 fun SduiComponentDto.action(key: String): SduiActionDto? {
     return actions[key]
 }
+
+/**
+ * Extension helper to retrieve and decode style property from props.
+ */
+fun SduiComponentDto.styleProp(): SduiStyleDto? {
+    val element = props["style"] ?: return null
+    return try {
+        kotlinx.serialization.json.Json.decodeFromJsonElement(SduiStyleDto.serializer(), element)
+    } catch (e: Exception) {
+        null
+    }
+}
+
