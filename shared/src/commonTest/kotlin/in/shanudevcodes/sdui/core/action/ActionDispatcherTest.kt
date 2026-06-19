@@ -359,4 +359,31 @@ class ActionDispatcherTest {
         assertTrue(configInterceptorCalled)
         assertFalse(defaultActionHandlerCalled)
     }
+
+    @Test
+    fun testActionInterceptor_doesNotBlockWhenReturnsFalse() = runTest {
+        var configInterceptorCalled = false
+        var defaultActionHandlerCalled = false
+
+        SduiEngine.initialize(
+            SduiConfig(
+                baseUrl = "https://example.com",
+                actionInterceptor = {
+                    configInterceptorCalled = true
+                    false // Do not consume action
+                }
+            )
+        )
+
+        val dispatcher = ActionDispatcher(
+            stateHolder = stateHolder,
+            onNavigate = { _, _ -> defaultActionHandlerCalled = true }
+        )
+
+        val action = SduiActionDto(type = "Navigate", route = "test")
+        dispatcher.dispatch(action)
+
+        assertTrue(configInterceptorCalled)
+        assertTrue(defaultActionHandlerCalled)
+    }
 }
