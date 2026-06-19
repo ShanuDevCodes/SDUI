@@ -23,6 +23,9 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import `in`.shanudevcodes.sdui.core.schema.SduiActionDto
 import `in`.shanudevcodes.sdui.core.schema.SduiModifierDto
+import `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiModifier
+import `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiAction
+import `in`.shanudevcodes.sdui.feature.screen.data.mapper.ScreenMapper
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -35,6 +38,31 @@ import kotlinx.serialization.json.jsonPrimitive
  * Utility to resolve server-defined modifiers into native Compose Modifiers.
  */
 object ModifierResolver {
+
+    /**
+     * Resolves a list of domain SduiModifier elements into a single chained Compose Modifier.
+     */
+    fun resolveDomain(
+        modifiers: List<SduiModifier>,
+        onAction: (SduiAction) -> Unit
+    ): Modifier {
+        val json = kotlinx.serialization.json.Json { ignoreUnknownKeys = true }
+        val dtoModifiers = modifiers.map { mod ->
+            SduiModifierDto(
+                type = mod.type,
+                value = mod.valueStr?.let {
+                    try {
+                        json.parseToJsonElement(it)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+            )
+        }
+        return resolve(dtoModifiers) { actionDto ->
+            onAction(ScreenMapper.mapAction(actionDto))
+        }
+    }
 
     /**
      * Resolves a list of SduiModifierDto elements into a single chained Compose Modifier.

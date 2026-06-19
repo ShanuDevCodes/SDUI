@@ -1,31 +1,76 @@
 package `in`.shanudevcodes.sdui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.resources.painterResource
-
-import sdui.shared.generated.resources.Res
-import sdui.shared.generated.resources.compose_multiplatform
+import `in`.shanudevcodes.sdui.core.engine.SduiConfig
+import `in`.shanudevcodes.sdui.core.engine.SduiEngine
+import `in`.shanudevcodes.sdui.feature.screen.data.ScreenRepositoryImpl
+import androidx.navigation3.runtime.NavBackStack
+import `in`.shanudevcodes.sdui.core.presentation.SduiRoute
+import `in`.shanudevcodes.sdui.core.presentation.SduiNavDisplay
+import kotlinx.coroutines.launch
 
 @Composable
-@Preview
 fun App() {
-    MaterialTheme {
-        Surface {
+    // Initialize the SDUI Engine pointing to our local server
+    remember {
+        SduiEngine.initialize(
+            config = SduiConfig(
+                baseUrl = "http://localhost:8085/",
+                defaultHeaders = emptyMap()
+            )
+        )
+    }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    val repository = remember { ScreenRepositoryImpl() }
+    val backStack = remember { NavBackStack<SduiRoute>(SduiRoute.Screen("complex")) }
+
+    MaterialTheme {
+        Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            modifier = Modifier.fillMaxSize()
+        ) { paddingValues ->
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                SduiNavDisplay(
+                    backStack = backStack,
+                    repository = repository,
+                    onNavigate = { route, params ->
+                        scope.launch {
+                            if (route == "back") {
+                                if (backStack.size > 1) {
+                                    backStack.removeAt(backStack.lastIndex)
+                                } else {
+                                    snackbarHostState.showSnackbar("Cannot go back: Root screen reached")
+                                }
+                            } else {
+                                backStack.add(SduiRoute.Screen(route, params))
+                            }
+                        }
+                    },
+                    onShowSnackbar = { message ->
+                        scope.launch {
+                            snackbarHostState.showSnackbar(message)
+                        }
+                    },
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 }

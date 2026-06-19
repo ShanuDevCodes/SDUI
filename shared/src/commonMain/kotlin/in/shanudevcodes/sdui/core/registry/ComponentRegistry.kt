@@ -7,10 +7,13 @@ import `in`.shanudevcodes.sdui.core.components.ButtonRenderer
 import `in`.shanudevcodes.sdui.core.components.CardRenderer
 import `in`.shanudevcodes.sdui.core.components.CheckboxRenderer
 import `in`.shanudevcodes.sdui.core.components.ColumnRenderer
+import `in`.shanudevcodes.sdui.core.components.ConditionalRenderer
 import `in`.shanudevcodes.sdui.core.components.DividerRenderer
 import `in`.shanudevcodes.sdui.core.components.DropdownMenuRenderer
 import `in`.shanudevcodes.sdui.core.components.IconRenderer
 import `in`.shanudevcodes.sdui.core.components.ImageRenderer
+import `in`.shanudevcodes.sdui.core.components.LazyColumnRenderer
+import `in`.shanudevcodes.sdui.core.components.LazyRowRenderer
 import `in`.shanudevcodes.sdui.core.components.RadioButtonRenderer
 import `in`.shanudevcodes.sdui.core.components.RowRenderer
 import `in`.shanudevcodes.sdui.core.components.SliderRenderer
@@ -19,6 +22,7 @@ import `in`.shanudevcodes.sdui.core.components.SurfaceRenderer
 import `in`.shanudevcodes.sdui.core.components.SwitchRenderer
 import `in`.shanudevcodes.sdui.core.components.TextFieldRenderer
 import `in`.shanudevcodes.sdui.core.components.TextRenderer
+import `in`.shanudevcodes.sdui.core.components.VisibleRenderer
 import `in`.shanudevcodes.sdui.core.schema.SduiComponentDto
 import `in`.shanudevcodes.sdui.core.state.SduiStateHolder
 
@@ -89,6 +93,18 @@ object ComponentRegistry {
         }
         register("DropdownMenu") { component, modifier, stateHolder ->
             DropdownMenuRenderer(component, modifier, stateHolder)
+        }
+        register("LazyColumn") { component, modifier, stateHolder ->
+            LazyColumnRenderer(component, modifier, stateHolder)
+        }
+        register("LazyRow") { component, modifier, stateHolder ->
+            LazyRowRenderer(component, modifier, stateHolder)
+        }
+        register("Conditional") { component, modifier, stateHolder ->
+            ConditionalRenderer(component, modifier, stateHolder)
+        }
+        register("Visible") { component, modifier, stateHolder ->
+            VisibleRenderer(component, modifier, stateHolder)
         }
     }
 
@@ -161,6 +177,18 @@ object ComponentRegistry {
         }
         register("DropdownMenu") { component, modifier, stateHolder ->
             DropdownMenuRenderer(component, modifier, stateHolder)
+        }
+        register("LazyColumn") { component, modifier, stateHolder ->
+            LazyColumnRenderer(component, modifier, stateHolder)
+        }
+        register("LazyRow") { component, modifier, stateHolder ->
+            LazyRowRenderer(component, modifier, stateHolder)
+        }
+        register("Conditional") { component, modifier, stateHolder ->
+            ConditionalRenderer(component, modifier, stateHolder)
+        }
+        register("Visible") { component, modifier, stateHolder ->
+            VisibleRenderer(component, modifier, stateHolder)
         }
     }
 }

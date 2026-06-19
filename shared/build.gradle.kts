@@ -56,6 +56,10 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
+            // Navigation 3
+            implementation(libs.jetbrains.navigation3.ui)
+            implementation(libs.androidx.navigation3.runtime)
+
             //ktor
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)

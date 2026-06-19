@@ -8,11 +8,29 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 import `in`.shanudevcodes.sdui.core.schema.SduiStyleDto
+import `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiStyle
 
 /**
  * Utility to resolve server-defined styling attributes into native Compose TextStyles.
  */
 object StyleResolver {
+
+    /**
+     * Converts a domain SduiStyle configuration into a Compose TextStyle.
+     */
+    fun resolveDomain(style: SduiStyle?): TextStyle {
+        if (style == null) return TextStyle.Default
+        val dto = SduiStyleDto(
+            fontSize = style.fontSize,
+            fontWeight = style.fontWeight,
+            fontStyle = style.fontStyle,
+            color = style.color,
+            textAlign = style.textAlign,
+            maxLines = style.maxLines,
+            overflow = style.overflow
+        )
+        return resolve(dto)
+    }
 
     /**
      * Converts an SduiStyleDto configuration into a Compose TextStyle.

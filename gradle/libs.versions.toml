@@ -17,9 +17,13 @@ material3 = "1.11.0-alpha07"
 ktor = "3.2.3"
 kotlinx-serialization = "1.9.0"
 coil = "3.3.0"
-
+navigation3 = "1.0.0"
+cmpNavigation3 = "1.0.0-alpha05"
+navigation3Runtime = "1.0.0"
 
 [libraries]
+jetbrains-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "cmpNavigation3" }
+androidx-navigation3-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "navigation3Runtime" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

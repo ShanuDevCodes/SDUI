@@ -3,6 +3,7 @@ package `in`.shanudevcodes.sdui.core.state
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.serialization.json.JsonElement
 
 /**
@@ -23,8 +24,10 @@ class SduiStateHolder(initialState: Map<String, JsonElement> = emptyMap()) {
      * Updates/sets a state value, notifying observers.
      */
     fun setValue(key: String, value: JsonElement) {
-        val current = _state.value.toMutableMap()
-        current[key] = value
-        _state.value = current
+        _state.update { current ->
+            val next = current.toMutableMap()
+            next[key] = value
+            next
+        }
     }
 }
