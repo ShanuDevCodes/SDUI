@@ -2,9 +2,9 @@ package `in`.shanudevcodes.sdui.feature.screen
 
 import `in`.shanudevcodes.sdui.feature.screen.domain.model.ScreenDefinition
 import `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiNode
-import `in`.shanudevcodes.sdui.feature.screen.domain.repository.ScreenRepository
 import `in`.shanudevcodes.sdui.feature.screen.presentation.SduiScreenUiState
 import `in`.shanudevcodes.sdui.feature.screen.presentation.SduiScreenViewModel
+import `in`.shanudevcodes.sdui.testing.FakeScreenRepository
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -16,15 +16,6 @@ import kotlin.test.assertTrue
  */
 class SduiScreenViewModelTest {
 
-    private class FakeScreenRepository(
-        private val result: Result<ScreenDefinition>
-    ) : ScreenRepository {
-        override suspend fun getScreen(
-            screenId: String,
-            params: Map<String, String>
-        ): Result<ScreenDefinition> = result
-    }
-
     @Test
     fun testViewModel_loadsSuccessState() = runTest {
         val testDispatcher = UnconfinedTestDispatcher()
@@ -34,7 +25,9 @@ class SduiScreenViewModelTest {
             title = "Home",
             root = SduiNode.SpacerNode(emptyList())
         )
-        val repository = FakeScreenRepository(Result.success(definition))
+        val repository = FakeScreenRepository().apply {
+            registerScreen("home", definition)
+        }
         val viewModel = SduiScreenViewModel("home", repository, testDispatcher)
 
         assertTrue(viewModel.uiState.value is SduiScreenUiState.Success)
@@ -45,7 +38,9 @@ class SduiScreenViewModelTest {
     @Test
     fun testViewModel_loadsErrorState() = runTest {
         val testDispatcher = UnconfinedTestDispatcher()
-        val repository = FakeScreenRepository(Result.failure(Exception("Network error")))
+        val repository = FakeScreenRepository().apply {
+            setError(Exception("Network error"))
+        }
         val viewModel = SduiScreenViewModel("home", repository, testDispatcher)
 
         assertTrue(viewModel.uiState.value is SduiScreenUiState.Error)

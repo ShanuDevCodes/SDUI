@@ -8,6 +8,7 @@ import `in`.shanudevcodes.sdui.core.renderer.SduiRenderer
 import `in`.shanudevcodes.sdui.core.schema.SduiComponentDto
 import `in`.shanudevcodes.sdui.core.schema.stringProp
 import `in`.shanudevcodes.sdui.core.state.SduiStateHolder
+import kotlinx.serialization.json.jsonPrimitive
 
 @Composable
 fun BoxRenderer(
@@ -33,7 +34,24 @@ fun BoxRenderer(
         contentAlignment = contentAlignment
     ) {
         component.children.forEach { child ->
-            SduiRenderer(component = child, stateHolder = stateHolder)
+            val alignValue = child.modifiers.firstOrNull { it.type == "align" }
+                ?.value?.jsonPrimitive?.content
+            val scopeModifier: Modifier = if (alignValue != null) {
+                val alignment = when (alignValue) {
+                    "TopStart" -> Alignment.TopStart
+                    "TopCenter" -> Alignment.TopCenter
+                    "TopEnd" -> Alignment.TopEnd
+                    "CenterStart" -> Alignment.CenterStart
+                    "Center" -> Alignment.Center
+                    "CenterEnd" -> Alignment.CenterEnd
+                    "BottomStart" -> Alignment.BottomStart
+                    "BottomCenter" -> Alignment.BottomCenter
+                    "BottomEnd" -> Alignment.BottomEnd
+                    else -> null
+                }
+                if (alignment != null) Modifier.align(alignment) else Modifier
+            } else Modifier
+            SduiRenderer(component = child, stateHolder = stateHolder, modifier = scopeModifier)
         }
     }
 }

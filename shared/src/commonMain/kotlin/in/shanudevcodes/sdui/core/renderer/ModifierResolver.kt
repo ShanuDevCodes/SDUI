@@ -1,6 +1,7 @@
 package `in`.shanudevcodes.sdui.core.renderer
 
 import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.aspectRatio
@@ -11,6 +12,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.captionBarPadding
+import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.systemGesturesPadding
+import androidx.compose.foundation.layout.waterfallPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Modifier
@@ -20,6 +33,11 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import `in`.shanudevcodes.sdui.core.schema.SduiActionDto
 import `in`.shanudevcodes.sdui.core.schema.SduiModifierDto
@@ -101,6 +119,7 @@ object ModifierResolver {
                     val color = parseHexColor(hex)
                     if (color != Color.Unspecified) result.background(color) else result
                 }
+                "backgroundGradient" -> result.applyGradientBackground(modifier.value)
                 "border" -> result.applyBorder(modifier.value)
                 "clip" -> result.clip(parseShape(modifier.value))
                 "shadow" -> result.applyShadow(modifier.value)
@@ -118,6 +137,35 @@ object ModifierResolver {
                     // Row and Column renderers will inspect the modifier list and apply weight independently.
                     result
                 }
+                "wrapContentWidth" -> result.wrapContentWidth()
+                "wrapContentHeight" -> result.wrapContentHeight()
+                "scrollable" -> {
+                    // Scrollable is handled at the Column/Row renderer level via a "scrollable" prop.
+                    result
+                }
+                "testTag" -> {
+                    val tag = modifier.value?.jsonPrimitive?.content ?: ""
+                    if (tag.isNotEmpty()) result.testTag(tag) else result
+                }
+                "semantics" -> {
+                    val desc = (modifier.value as? JsonObject)
+                        ?.get("contentDescription")?.jsonPrimitive?.content ?: ""
+                    if (desc.isNotEmpty()) result.semantics { contentDescription = desc } else result
+                }
+                "semanticsButton" -> {
+                    result.semantics { role = Role.Button }
+                }
+                // System inset modifiers — no value needed, each maps to a WindowInsets extension
+                "statusBarsPadding"     -> result.statusBarsPadding()
+                "navigationBarsPadding" -> result.navigationBarsPadding()
+                "systemBarsPadding"     -> result.systemBarsPadding()
+                "imePadding"            -> result.imePadding()
+                "safeDrawingPadding"    -> result.safeDrawingPadding()
+                "safeContentPadding"    -> result.safeContentPadding()
+                "captionBarPadding"     -> result.captionBarPadding()
+                "displayCutoutPadding"  -> result.displayCutoutPadding()
+                "systemGesturesPadding" -> result.systemGesturesPadding()
+                "waterfallPadding"      -> result.waterfallPadding()
                 else -> {
                     // Unknown modifier, skip gracefully
                     result
@@ -125,6 +173,31 @@ object ModifierResolver {
             }
         }
         return result
+    }
+
+    private fun Modifier.applyGradientBackground(value: JsonElement?): Modifier {
+        if (value == null || value !is JsonObject) return this
+        val obj = value.jsonObject
+        val colorsArray = obj["colors"]
+        val colors = if (colorsArray != null) {
+            try {
+                val json = kotlinx.serialization.json.Json
+                val list = colorsArray as? kotlinx.serialization.json.JsonArray ?: return this
+                list.mapNotNull { el ->
+                    val hex = (el as? JsonPrimitive)?.content ?: return@mapNotNull null
+                    val c = parseHexColor(hex)
+                    if (c != Color.Unspecified) c else null
+                }
+            } catch (e: Exception) { emptyList() }
+        } else emptyList()
+        if (colors.size < 2) return this
+        val direction = obj["direction"]?.jsonPrimitive?.content ?: "vertical"
+        val brush = when (direction) {
+            "horizontal" -> Brush.horizontalGradient(colors)
+            "diagonal"   -> Brush.linearGradient(colors)
+            else          -> Brush.verticalGradient(colors)
+        }
+        return this.background(brush)
     }
 
     private fun Modifier.applyPadding(value: JsonElement?): Modifier {

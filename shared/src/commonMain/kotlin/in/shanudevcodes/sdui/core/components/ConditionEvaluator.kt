@@ -27,8 +27,8 @@ object ConditionEvaluator {
         }
 
         return when (operator) {
-            "eq" -> actualValue == compareValue
-            "neq" -> actualValue != compareValue
+            "eq" -> normalizedEquals(actualValue, compareValue)
+            "neq" -> !normalizedEquals(actualValue, compareValue)
             "gt" -> compareNumeric(actualValue, compareValue) > 0
             "lt" -> compareNumeric(actualValue, compareValue) < 0
             "contains" -> {
@@ -52,6 +52,36 @@ object ConditionEvaluator {
             }
             else -> false
         }
+    }
+
+    private fun normalizedEquals(a: JsonElement?, b: JsonElement?): Boolean {
+        // Both null / JsonNull
+        if ((a == null || a is JsonNull) && (b == null || b is JsonNull)) return true
+        if (a == null || a is JsonNull || b == null || b is JsonNull) return false
+
+        val aPrim = a.jsonPrimitiveOrNull() ?: return a == b
+        val bPrim = b.jsonPrimitiveOrNull() ?: return a == b
+
+        // Boolean coercion: compare as booleans if either side is boolean
+        val aBool = aPrim.booleanOrNull ?: aPrim.content.toBooleanStrictOrNull()
+        val bBool = bPrim.booleanOrNull ?: bPrim.content.toBooleanStrictOrNull()
+        if (aBool != null && bBool != null) return aBool == bBool
+        if (aBool != null) {
+            val bFromStr = bPrim.content.toBooleanStrictOrNull()
+            if (bFromStr != null) return aBool == bFromStr
+        }
+        if (bBool != null) {
+            val aFromStr = aPrim.content.toBooleanStrictOrNull()
+            if (aFromStr != null) return bBool == aFromStr
+        }
+
+        // Numeric coercion
+        val aFloat = aPrim.floatOrNull
+        val bFloat = bPrim.floatOrNull
+        if (aFloat != null && bFloat != null) return aFloat == bFloat
+
+        // Content string comparison
+        return aPrim.content == bPrim.content
     }
 
     private fun JsonElement.jsonPrimitiveOrNull(): JsonPrimitive? {

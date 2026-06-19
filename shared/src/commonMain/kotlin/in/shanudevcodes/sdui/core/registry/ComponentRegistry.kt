@@ -6,16 +6,21 @@ import `in`.shanudevcodes.sdui.core.components.BoxRenderer
 import `in`.shanudevcodes.sdui.core.components.ButtonRenderer
 import `in`.shanudevcodes.sdui.core.components.CardRenderer
 import `in`.shanudevcodes.sdui.core.components.CheckboxRenderer
+import `in`.shanudevcodes.sdui.core.components.CircularProgressRenderer
 import `in`.shanudevcodes.sdui.core.components.ColumnRenderer
 import `in`.shanudevcodes.sdui.core.components.ConditionalRenderer
 import `in`.shanudevcodes.sdui.core.components.DividerRenderer
 import `in`.shanudevcodes.sdui.core.components.DropdownMenuRenderer
+import `in`.shanudevcodes.sdui.core.components.IconButtonRenderer
 import `in`.shanudevcodes.sdui.core.components.IconRenderer
 import `in`.shanudevcodes.sdui.core.components.ImageRenderer
 import `in`.shanudevcodes.sdui.core.components.LazyColumnRenderer
+import `in`.shanudevcodes.sdui.core.components.LazyGridRenderer
 import `in`.shanudevcodes.sdui.core.components.LazyRowRenderer
+import `in`.shanudevcodes.sdui.core.components.LinearProgressRenderer
 import `in`.shanudevcodes.sdui.core.components.RadioButtonRenderer
 import `in`.shanudevcodes.sdui.core.components.RowRenderer
+import `in`.shanudevcodes.sdui.core.components.ScaffoldRenderer
 import `in`.shanudevcodes.sdui.core.components.SliderRenderer
 import `in`.shanudevcodes.sdui.core.components.SpacerRenderer
 import `in`.shanudevcodes.sdui.core.components.SurfaceRenderer
@@ -100,11 +105,26 @@ object ComponentRegistry {
         register("LazyRow") { component, modifier, stateHolder ->
             LazyRowRenderer(component, modifier, stateHolder)
         }
+        register("LazyGrid") { component, modifier, stateHolder ->
+            LazyGridRenderer(component, modifier, stateHolder)
+        }
         register("Conditional") { component, modifier, stateHolder ->
             ConditionalRenderer(component, modifier, stateHolder)
         }
         register("Visible") { component, modifier, stateHolder ->
             VisibleRenderer(component, modifier, stateHolder)
+        }
+        register("Scaffold") { component, modifier, stateHolder ->
+            ScaffoldRenderer(component, modifier, stateHolder)
+        }
+        register("IconButton") { component, modifier, stateHolder ->
+            IconButtonRenderer(component, modifier, stateHolder)
+        }
+        register("CircularProgress") { component, modifier, stateHolder ->
+            CircularProgressRenderer(component, modifier, stateHolder)
+        }
+        register("LinearProgress") { component, modifier, stateHolder ->
+            LinearProgressRenderer(component, modifier, stateHolder)
         }
     }
 
@@ -184,11 +204,26 @@ object ComponentRegistry {
         register("LazyRow") { component, modifier, stateHolder ->
             LazyRowRenderer(component, modifier, stateHolder)
         }
+        register("LazyGrid") { component, modifier, stateHolder ->
+            LazyGridRenderer(component, modifier, stateHolder)
+        }
         register("Conditional") { component, modifier, stateHolder ->
             ConditionalRenderer(component, modifier, stateHolder)
         }
         register("Visible") { component, modifier, stateHolder ->
             VisibleRenderer(component, modifier, stateHolder)
+        }
+        register("Scaffold") { component, modifier, stateHolder ->
+            ScaffoldRenderer(component, modifier, stateHolder)
+        }
+        register("IconButton") { component, modifier, stateHolder ->
+            IconButtonRenderer(component, modifier, stateHolder)
+        }
+        register("CircularProgress") { component, modifier, stateHolder ->
+            CircularProgressRenderer(component, modifier, stateHolder)
+        }
+        register("LinearProgress") { component, modifier, stateHolder ->
+            LinearProgressRenderer(component, modifier, stateHolder)
         }
     }
 }

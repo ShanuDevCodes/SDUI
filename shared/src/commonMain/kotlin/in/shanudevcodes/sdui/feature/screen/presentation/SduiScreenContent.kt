@@ -95,7 +95,10 @@ private fun mapNodeToDto(node: `in`.shanudevcodes.sdui.feature.screen.domain.mod
                     color = style.color,
                     textAlign = style.textAlign,
                     maxLines = style.maxLines,
-                    overflow = style.overflow
+                    overflow = style.overflow,
+                    letterSpacing = style.letterSpacing,
+                    lineHeight = style.lineHeight,
+                    textDecoration = style.textDecoration
                 )
                 props["style"] = json.encodeToJsonElement(`in`.shanudevcodes.sdui.core.schema.SduiStyleDto.serializer(), styleDto)
             }
@@ -116,11 +119,17 @@ private fun mapNodeToDto(node: `in`.shanudevcodes.sdui.feature.screen.domain.mod
         is `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiNode.CardNode -> {
             props["elevation"] = kotlinx.serialization.json.JsonPrimitive(node.elevation)
             props["shape"] = kotlinx.serialization.json.JsonPrimitive(node.shape)
+            props["radius"] = kotlinx.serialization.json.JsonPrimitive(node.radius)
         }
         is `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiNode.SurfaceNode -> {
             props["color"] = kotlinx.serialization.json.JsonPrimitive(node.color)
             props["elevation"] = kotlinx.serialization.json.JsonPrimitive(node.elevation)
             props["shape"] = kotlinx.serialization.json.JsonPrimitive(node.shape)
+            props["radius"] = kotlinx.serialization.json.JsonPrimitive(node.radius)
+            if (node.contentColor.isNotEmpty()) props["contentColor"] = kotlinx.serialization.json.JsonPrimitive(node.contentColor)
+            if (node.shadowElevation > 0) props["shadowElevation"] = kotlinx.serialization.json.JsonPrimitive(node.shadowElevation)
+            if (node.borderWidth > 0) props["borderWidth"] = kotlinx.serialization.json.JsonPrimitive(node.borderWidth)
+            if (node.borderColor.isNotEmpty()) props["borderColor"] = kotlinx.serialization.json.JsonPrimitive(node.borderColor)
         }
         is `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiNode.ButtonNode -> {
             props["text"] = kotlinx.serialization.json.JsonPrimitive(node.text)
@@ -172,6 +181,10 @@ private fun mapNodeToDto(node: `in`.shanudevcodes.sdui.feature.screen.domain.mod
             if (node.horizontalArrangement.isNotEmpty()) props["horizontalArrangement"] = kotlinx.serialization.json.JsonPrimitive(node.horizontalArrangement)
             if (node.verticalAlignment.isNotEmpty()) props["verticalAlignment"] = kotlinx.serialization.json.JsonPrimitive(node.verticalAlignment)
         }
+        is `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiNode.LazyGridNode -> {
+            props["columns"] = kotlinx.serialization.json.JsonPrimitive(node.columns)
+            props["space"] = kotlinx.serialization.json.JsonPrimitive(node.space)
+        }
         is `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiNode.ConditionalNode -> {
             props["stateKey"] = kotlinx.serialization.json.JsonPrimitive(node.stateKey)
             props["operator"] = kotlinx.serialization.json.JsonPrimitive(node.operator)
@@ -186,6 +199,26 @@ private fun mapNodeToDto(node: `in`.shanudevcodes.sdui.feature.screen.domain.mod
         }
         is `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiNode.SpacerNode -> {}
         is `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiNode.FallbackNode -> {}
+        is `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiNode.ScaffoldNode -> {
+            props["topBarTitle"] = kotlinx.serialization.json.JsonPrimitive(node.topBarTitle)
+            props["topBarNavigationIcon"] = kotlinx.serialization.json.JsonPrimitive(node.topBarNavigationIcon)
+            props["showTopBar"] = kotlinx.serialization.json.JsonPrimitive(node.showTopBar)
+        }
+        is `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiNode.IconButtonNode -> {
+            props["icon"] = kotlinx.serialization.json.JsonPrimitive(node.icon)
+            props["contentDescription"] = kotlinx.serialization.json.JsonPrimitive(node.contentDescription)
+            props["enabled"] = kotlinx.serialization.json.JsonPrimitive(node.enabled)
+            node.onClick?.let { actions["onClick"] = mapActionToDto(it) }
+        }
+        is `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiNode.CircularProgressNode -> {
+            props["progress"] = kotlinx.serialization.json.JsonPrimitive(node.progress)
+            props["color"] = kotlinx.serialization.json.JsonPrimitive(node.color)
+        }
+        is `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiNode.LinearProgressNode -> {
+            props["progress"] = kotlinx.serialization.json.JsonPrimitive(node.progress)
+            props["color"] = kotlinx.serialization.json.JsonPrimitive(node.color)
+            props["trackColor"] = kotlinx.serialization.json.JsonPrimitive(node.trackColor)
+        }
     }
 
     return SduiComponentDto(

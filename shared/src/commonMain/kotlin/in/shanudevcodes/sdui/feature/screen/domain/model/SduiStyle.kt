@@ -10,5 +10,8 @@ data class SduiStyle(
     val color: String? = null,
     val textAlign: String? = null,
     val maxLines: Int? = null,
-    val overflow: String? = null
+    val overflow: String? = null,
+    val letterSpacing: Float? = null,
+    val lineHeight: Int? = null,
+    val textDecoration: String? = null
 )

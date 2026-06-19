@@ -83,6 +83,7 @@ sealed interface SduiNode {
     data class CardNode(
         val elevation: Int,
         val shape: String,
+        val radius: Int,
         override val children: List<SduiNode>,
         override val modifiers: List<SduiModifier>
     ) : SduiNode {
@@ -93,6 +94,11 @@ sealed interface SduiNode {
         val color: String,
         val elevation: Int,
         val shape: String,
+        val radius: Int,
+        val contentColor: String,
+        val shadowElevation: Int,
+        val borderWidth: Int,
+        val borderColor: String,
         override val children: List<SduiNode>,
         override val modifiers: List<SduiModifier>
     ) : SduiNode {
@@ -194,6 +200,15 @@ sealed interface SduiNode {
         override val type: String = "LazyRow"
     }
 
+    data class LazyGridNode(
+        val columns: Int,
+        val space: Int,
+        override val children: List<SduiNode>,
+        override val modifiers: List<SduiModifier>
+    ) : SduiNode {
+        override val type: String = "LazyGrid"
+    }
+
     data class ConditionalNode(
         val stateKey: String,
         val operator: String,
@@ -221,6 +236,46 @@ sealed interface SduiNode {
         override val modifiers: List<SduiModifier>
     ) : SduiNode {
         override val type: String = "Fallback"
+        override val children: List<SduiNode> = emptyList()
+    }
+
+    data class ScaffoldNode(
+        val topBarTitle: String,
+        val topBarNavigationIcon: String,
+        val showTopBar: Boolean,
+        override val children: List<SduiNode>,
+        override val modifiers: List<SduiModifier>
+    ) : SduiNode {
+        override val type: String = "Scaffold"
+    }
+
+    data class IconButtonNode(
+        val icon: String,
+        val contentDescription: String,
+        val enabled: Boolean,
+        val onClick: SduiAction?,
+        override val modifiers: List<SduiModifier>
+    ) : SduiNode {
+        override val type: String = "IconButton"
+        override val children: List<SduiNode> = emptyList()
+    }
+
+    data class CircularProgressNode(
+        val progress: Float,
+        val color: String,
+        override val modifiers: List<SduiModifier>
+    ) : SduiNode {
+        override val type: String = "CircularProgress"
+        override val children: List<SduiNode> = emptyList()
+    }
+
+    data class LinearProgressNode(
+        val progress: Float,
+        val color: String,
+        val trackColor: String,
+        override val modifiers: List<SduiModifier>
+    ) : SduiNode {
+        override val type: String = "LinearProgress"
         override val children: List<SduiNode> = emptyList()
     }
 }

@@ -2,6 +2,7 @@ package `in`.shanudevcodes.sdui.feature.screen.data
 
 import `in`.shanudevcodes.sdui.core.engine.SduiEngine
 import `in`.shanudevcodes.sdui.core.schema.SduiScreenDto
+import `in`.shanudevcodes.sdui.core.validation.SduiValidator
 import `in`.shanudevcodes.sdui.feature.screen.data.mapper.ScreenMapper
 import `in`.shanudevcodes.sdui.feature.screen.domain.model.ScreenDefinition
 import `in`.shanudevcodes.sdui.feature.screen.domain.repository.ScreenRepository
@@ -25,6 +26,10 @@ class ScreenRepositoryImpl : ScreenRepository {
             }
         }
         val screenDto: SduiScreenDto = response.body()
+        val validation = SduiValidator.validate(screenDto)
+        if (validation is SduiValidator.ValidationResult.Invalid) {
+            throw IllegalStateException(validation.reason)
+        }
         ScreenMapper.map(screenDto)
     }
 }

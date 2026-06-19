@@ -1,5 +1,6 @@
 package `in`.shanudevcodes.sdui.core.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -44,17 +45,12 @@ fun ConditionalRenderer(
         }
     }
 
-    if (isConditionTrue) {
-        if (thenComponent != null) {
-            SduiRenderer(thenComponent, stateHolder, modifier)
-        } else if (component.children.isNotEmpty()) {
-            SduiRenderer(component.children[0], stateHolder, modifier)
-        }
-    } else {
-        if (elseComponent != null) {
-            SduiRenderer(elseComponent, stateHolder, modifier)
-        } else if (component.children.size >= 2) {
-            SduiRenderer(component.children[1], stateHolder, modifier)
-        }
+    AnimatedVisibility(visible = isConditionTrue) {
+        val thenComp = thenComponent ?: component.children.getOrNull(0)
+        if (thenComp != null) SduiRenderer(thenComp, stateHolder, modifier)
+    }
+    AnimatedVisibility(visible = !isConditionTrue) {
+        val elseComp = elseComponent ?: component.children.getOrNull(1)
+        if (elseComp != null) SduiRenderer(elseComp, stateHolder, modifier)
     }
 }
