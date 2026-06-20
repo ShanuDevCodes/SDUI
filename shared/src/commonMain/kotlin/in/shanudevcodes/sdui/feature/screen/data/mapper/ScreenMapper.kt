@@ -74,6 +74,7 @@ object ScreenMapper {
                 modifiers = modifiers
             )
             "Icon" -> SduiNode.IconNode(
+                url = dto.stringProp("url"),
                 name = dto.stringProp("name"),
                 tint = dto.stringProp("tint"),
                 modifiers = modifiers
@@ -235,6 +236,9 @@ object ScreenMapper {
             )
             else -> SduiNode.FallbackNode(
                 originalType = dto.type,
+                originalProps = dto.props,
+                originalActions = dto.actions.mapValues { mapAction(it.value) },
+                children = children,
                 modifiers = modifiers
             )
         }

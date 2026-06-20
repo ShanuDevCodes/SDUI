@@ -196,4 +196,87 @@ class InputComponentsTest {
         val selected = stateHolder.getValue("fruit")?.jsonPrimitive?.content
         assertEquals("Banana", selected)
     }
+
+
+    @Test
+    fun testButtonRenderer_variants() = runComposeUiTest {
+        val stateHolder = SduiStateHolder()
+        val variants = listOf("filled", "outlined", "text", "elevated", "tonal")
+
+        for (variant in variants) {
+            val buttonDto = SduiComponentDto(
+                type = "Button",
+                props = mapOf(
+                    "text" to kotlinx.serialization.json.JsonPrimitive("Btn $variant"),
+                    "variant" to kotlinx.serialization.json.JsonPrimitive(variant),
+                    "containerColor" to kotlinx.serialization.json.JsonPrimitive("#FF0000"),
+                    "contentColor" to kotlinx.serialization.json.JsonPrimitive("#FFFFFF")
+                )
+            )
+
+            setContent {
+                ButtonRenderer(buttonDto, Modifier, stateHolder)
+            }
+            onNodeWithText("Btn $variant").assertExists()
+        }
+    }
+
+    @Test
+    fun testTextFieldRenderer_outlined_and_supportingText() = runComposeUiTest {
+        val textFieldDto = SduiComponentDto(
+            type = "TextField",
+            props = mapOf(
+                "stateKey" to kotlinx.serialization.json.JsonPrimitive("email"),
+                "label" to kotlinx.serialization.json.JsonPrimitive("Email Label"),
+                "variant" to kotlinx.serialization.json.JsonPrimitive("outlined"),
+                "supportingText" to kotlinx.serialization.json.JsonPrimitive("Enter valid email"),
+                "isError" to kotlinx.serialization.json.JsonPrimitive(true),
+                "leadingIcon" to kotlinx.serialization.json.JsonPrimitive("home"),
+                "trailingIcon" to kotlinx.serialization.json.JsonPrimitive("check")
+            )
+        )
+        val stateHolder = SduiStateHolder()
+
+        setContent {
+            TextFieldRenderer(textFieldDto, Modifier, stateHolder)
+        }
+
+        onNodeWithText("Email Label").assertExists()
+        onNodeWithText("Enter valid email").assertExists()
+    }
+
+    @Test
+    fun testDropdownMenuRenderer_objectOptions() = runComposeUiTest {
+        val dropdownDto = SduiComponentDto(
+            type = "DropdownMenu",
+            props = mapOf(
+                "stateKey" to kotlinx.serialization.json.JsonPrimitive("role"),
+                "label" to kotlinx.serialization.json.JsonPrimitive("Select Role"),
+                "options" to kotlinx.serialization.json.JsonArray(
+                    listOf(
+                        kotlinx.serialization.json.buildJsonObject {
+                            put("label", kotlinx.serialization.json.JsonPrimitive("Administrator"))
+                            put("value", kotlinx.serialization.json.JsonPrimitive("admin"))
+                        },
+                        kotlinx.serialization.json.buildJsonObject {
+                            put("label", kotlinx.serialization.json.JsonPrimitive("Moderator"))
+                            put("value", kotlinx.serialization.json.JsonPrimitive("mod"))
+                        }
+                    )
+                )
+            )
+        )
+        val stateHolder = SduiStateHolder()
+
+        setContent {
+            DropdownMenuRenderer(dropdownDto, Modifier, stateHolder)
+        }
+
+        onNodeWithText("Select Role").performClick()
+        onNodeWithText("Moderator").performClick()
+
+        val selected = stateHolder.getValue("role")?.jsonPrimitive?.content
+        assertEquals("mod", selected)
+    }
 }
+

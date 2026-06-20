@@ -58,6 +58,16 @@ class ConditionalComponentsTest {
         assertFalse(ConditionEvaluator.evaluate(JsonPrimitive("text"), "isEmpty", null))
         assertTrue(ConditionEvaluator.evaluate(JsonPrimitive("text"), "isNotEmpty", null))
         assertFalse(ConditionEvaluator.evaluate(JsonPrimitive(""), "isNotEmpty", null))
+
+        // Type normalization equality tests (eq / neq)
+        assertTrue(ConditionEvaluator.evaluate(JsonPrimitive(true), "eq", JsonPrimitive("true")))
+        assertTrue(ConditionEvaluator.evaluate(JsonPrimitive("true"), "eq", JsonPrimitive(true)))
+        assertTrue(ConditionEvaluator.evaluate(JsonPrimitive(1), "eq", JsonPrimitive(1.0f)))
+        assertTrue(ConditionEvaluator.evaluate(JsonPrimitive(1.0f), "eq", JsonPrimitive("1.0")))
+        assertTrue(ConditionEvaluator.evaluate(JsonPrimitive("hello"), "eq", JsonPrimitive("hello")))
+        assertFalse(ConditionEvaluator.evaluate(JsonPrimitive(true), "eq", JsonPrimitive("false")))
+        assertFalse(ConditionEvaluator.evaluate(JsonPrimitive(1), "eq", JsonPrimitive(2)))
+        assertTrue(ConditionEvaluator.evaluate(JsonPrimitive(1), "neq", JsonPrimitive(2)))
     }
 
     @Test

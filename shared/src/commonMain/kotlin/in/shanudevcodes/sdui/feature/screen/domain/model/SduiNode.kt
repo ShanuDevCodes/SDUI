@@ -63,6 +63,7 @@ sealed interface SduiNode {
     }
 
     data class IconNode(
+        val url: String,
         val name: String,
         val tint: String,
         override val modifiers: List<SduiModifier>
@@ -233,10 +234,12 @@ sealed interface SduiNode {
 
     data class FallbackNode(
         val originalType: String,
+        val originalProps: Map<String, kotlinx.serialization.json.JsonElement> = emptyMap(),
+        val originalActions: Map<String, SduiAction> = emptyMap(),
+        override val children: List<SduiNode>,
         override val modifiers: List<SduiModifier>
     ) : SduiNode {
-        override val type: String = "Fallback"
-        override val children: List<SduiNode> = emptyList()
+        override val type: String get() = originalType   // preserves custom type for registry lookup
     }
 
     data class ScaffoldNode(

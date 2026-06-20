@@ -1,6 +1,10 @@
 package `in`.shanudevcodes.sdui
 
 import androidx.compose.foundation.layout.fillMaxSize
+import coil3.ImageLoader
+import coil3.compose.setSingletonImageLoaderFactory
+import coil3.network.ktor3.KtorNetworkFetcherFactory
+import coil3.svg.SvgDecoder
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -20,6 +24,15 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun App() {
+    setSingletonImageLoaderFactory { context ->
+        ImageLoader.Builder(context)
+            .components {
+                add(KtorNetworkFetcherFactory())
+                add(SvgDecoder.Factory())
+            }
+            .build()
+    }
+
     // Initialize the SDUI Engine pointing to our local server
     remember {
         SduiEngine.initialize(
@@ -28,6 +41,10 @@ fun App() {
                 defaultHeaders = emptyMap()
             )
         )
+        // Register custom host-app components
+        SduiEngine.registerComponent("SduiBannerCard") { component, modifier, stateHolder ->
+            SduiBannerCard(component, modifier, stateHolder)
+        }
     }
 
     val snackbarHostState = remember { SnackbarHostState() }

@@ -282,6 +282,26 @@ class ActionDispatcherTest {
     }
 
     @Test
+    fun testSequence_withNavigate() = runTest {
+        var navigatedRoute: String? = null
+        val dispatcher = ActionDispatcher(
+            stateHolder = stateHolder,
+            onNavigate = { route, _ -> navigatedRoute = route }
+        )
+
+        val action = SduiActionDto(
+            type = "Sequence",
+            actions = listOf(
+                SduiActionDto(type = "Navigate", route = "target_screen")
+            )
+        )
+
+        dispatcher.dispatch(action)
+        assertEquals("target_screen", navigatedRoute)
+    }
+
+
+    @Test
     fun testConditional_trueCondition() = runTest {
         var customTriggered = false
         val dispatcher = ActionDispatcher(

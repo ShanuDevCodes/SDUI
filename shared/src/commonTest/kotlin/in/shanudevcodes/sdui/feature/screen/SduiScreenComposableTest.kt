@@ -2,6 +2,7 @@ package `in`.shanudevcodes.sdui.feature.screen
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.v2.runComposeUiTest
 import `in`.shanudevcodes.sdui.core.registry.ComponentRegistry
 import `in`.shanudevcodes.sdui.feature.screen.domain.model.ScreenDefinition
@@ -74,4 +75,64 @@ class SduiScreenComposableTest {
 
         onNodeWithText("Welcome to SDUI").assertExists()
     }
+
+    @Test
+    fun testScreenComposable_rendersFallbackScreenOnError() = runComposeUiTest {
+        val repository = FakeScreenRepository(Result.failure(Exception("Could not load payload")))
+        val testDispatcher = UnconfinedTestDispatcher()
+        val viewModel = SduiScreenViewModel("error_screen", repository, testDispatcher)
+
+        setContent {
+            SduiScreenComposable(
+                viewModel = viewModel,
+                onNavigate = { _, _ -> },
+                onShowSnackbar = {}
+            )
+        }
+
+        onNodeWithText("Unable to load screen").assertExists()
+        onNodeWithText("Could not load payload").assertExists()
+        onNodeWithText("Retry").assertExists()
+    }
+
+    @Test
+    fun testScreenComposable_rendersAlertDialog_onShowDialog() = runComposeUiTest {
+        val dialogNode = SduiNode.ButtonNode(
+            text = "Show Alert",
+            enabled = true,
+            onClick = `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiAction(
+                type = "ShowDialog",
+                title = "Modal Title",
+                message = "Modal Body",
+                confirmText = "Proceed",
+                dismissText = "Cancel"
+            ),
+            children = emptyList(),
+            modifiers = emptyList()
+        )
+        val definition = ScreenDefinition(
+            screenId = "dialog_screen",
+            schemaVersion = "1.0",
+            title = "Dialog Title",
+            root = dialogNode
+        )
+        val repository = FakeScreenRepository(Result.success(definition))
+        val testDispatcher = UnconfinedTestDispatcher()
+        val viewModel = SduiScreenViewModel("dialog_screen", repository, testDispatcher)
+
+        setContent {
+            SduiScreenComposable(
+                viewModel = viewModel,
+                onNavigate = { _, _ -> },
+                onShowSnackbar = {}
+            )
+        }
+
+        onNodeWithText("Show Alert").performClick()
+        onNodeWithText("Modal Title").assertExists()
+        onNodeWithText("Modal Body").assertExists()
+        onNodeWithText("Proceed").assertExists()
+        onNodeWithText("Cancel").performClick()
+    }
 }
+

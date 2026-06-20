@@ -1,24 +1,16 @@
 package `in`.shanudevcodes.sdui.core.components
 
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.IconButton
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import `in`.shanudevcodes.sdui.core.renderer.LocalSduiActionHandler
 import `in`.shanudevcodes.sdui.core.schema.SduiComponentDto
 import `in`.shanudevcodes.sdui.core.schema.action
@@ -26,44 +18,55 @@ import `in`.shanudevcodes.sdui.core.schema.booleanProp
 import `in`.shanudevcodes.sdui.core.schema.stringProp
 import `in`.shanudevcodes.sdui.core.state.SduiStateHolder
 
+/**
+ * Renders a tappable icon button. The icon is a URL (PNG/SVG from CDN).
+ * Props: url, icon (name/CDN key), tint, contentDescription, enabled.
+ */
 @Composable
 fun IconButtonRenderer(
     component: SduiComponentDto,
     modifier: Modifier,
     stateHolder: SduiStateHolder
 ) {
-    val iconName = component.stringProp("icon")
-    val contentDescription = component.stringProp("contentDescription", iconName)
+    val url = component.stringProp("url")
+    val contentDesc = component.stringProp("contentDescription")
     val enabled = component.booleanProp("enabled", true)
+    val tintStr = component.stringProp("tint")
     val onClickAction = component.action("onClick")
     val onAction = LocalSduiActionHandler.current
 
+    val tint = parseIBColor(tintStr)
+
+    // Apply contentDescription to the button container so it's discoverable regardless of icon source
+    val buttonModifier = if (contentDesc.isNotEmpty())
+        modifier.semantics { contentDescription = contentDesc }
+    else modifier
+
     IconButton(
         onClick = { onClickAction?.let { onAction(it) } },
-        modifier = modifier,
+        modifier = buttonModifier,
         enabled = enabled
     ) {
-        Icon(
-            imageVector = resolveIconButtonIcon(iconName),
-            contentDescription = contentDescription
-        )
+        if (url.isNotEmpty()) {
+            AsyncImage(
+                model = url,
+                contentDescription = null, // already on parent
+                modifier = Modifier.size(24.dp),
+                contentScale = ContentScale.Fit,
+                colorFilter = if (tint != Color.Unspecified) ColorFilter.tint(tint) else null
+            )
+        }
     }
 }
 
-private fun resolveIconButtonIcon(name: String) = when (name.lowercase()) {
-    "home" -> androidx.compose.material.icons.Icons.Default.Home
-    "search" -> androidx.compose.material.icons.Icons.Default.Search
-    "settings" -> androidx.compose.material.icons.Icons.Default.Settings
-    "menu" -> androidx.compose.material.icons.Icons.Default.Menu
-    "arrowback", "arrow_back", "back" -> androidx.compose.material.icons.Icons.Default.ArrowBack
-    "add" -> androidx.compose.material.icons.Icons.Default.Add
-    "check" -> androidx.compose.material.icons.Icons.Default.Check
-    "close" -> androidx.compose.material.icons.Icons.Default.Close
-    "edit" -> androidx.compose.material.icons.Icons.Default.Edit
-    "person" -> androidx.compose.material.icons.Icons.Default.Person
-    "delete" -> androidx.compose.material.icons.Icons.Default.Delete
-    "favorite" -> androidx.compose.material.icons.Icons.Default.Favorite
-    "share" -> androidx.compose.material.icons.Icons.Default.Share
-    "warning" -> androidx.compose.material.icons.Icons.Default.Warning
-    else -> androidx.compose.material.icons.Icons.Default.Info
+private fun parseIBColor(hex: String?): Color {
+    if (hex.isNullOrEmpty()) return Color.Unspecified
+    val c = hex.removePrefix("#")
+    return try {
+        when (c.length) {
+            6 -> Color(c.toLong(16) or 0xFF000000)
+            8 -> Color(c.toLong(16))
+            else -> Color.Unspecified
+        }
+    } catch (e: Exception) { Color.Unspecified }
 }

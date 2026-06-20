@@ -77,4 +77,34 @@ class LazyComponentsTest {
 
         assertEquals(2, childRenderCount, "LazyRow should render all its children")
     }
+
+    @Test
+    fun testLazyGridRenderer_rendersChildren() = runComposeUiTest {
+        var childRenderCount = 0
+        ComponentRegistry.register("ChildType") { _, _, _ ->
+            childRenderCount++
+        }
+
+        val lazyGridDto = SduiComponentDto(
+            type = "LazyGrid",
+            props = mapOf(
+                "columns" to kotlinx.serialization.json.JsonPrimitive(3),
+                "space" to kotlinx.serialization.json.JsonPrimitive(8)
+            ),
+            children = listOf(
+                SduiComponentDto(type = "ChildType"),
+                SduiComponentDto(type = "ChildType"),
+                SduiComponentDto(type = "ChildType"),
+                SduiComponentDto(type = "ChildType")
+            )
+        )
+        val stateHolder = SduiStateHolder()
+
+        setContent {
+            LazyGridRenderer(lazyGridDto, Modifier, stateHolder)
+        }
+
+        assertEquals(4, childRenderCount, "LazyGrid should render all its children")
+    }
 }
+

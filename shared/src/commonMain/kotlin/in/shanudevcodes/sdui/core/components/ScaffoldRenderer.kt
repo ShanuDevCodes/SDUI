@@ -3,16 +3,19 @@ package `in`.shanudevcodes.sdui.core.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import `in`.shanudevcodes.sdui.core.renderer.LocalSduiActionHandler
 import `in`.shanudevcodes.sdui.core.renderer.SduiRenderer
 import `in`.shanudevcodes.sdui.core.schema.SduiActionDto
@@ -21,6 +24,11 @@ import `in`.shanudevcodes.sdui.core.schema.booleanProp
 import `in`.shanudevcodes.sdui.core.schema.stringProp
 import `in`.shanudevcodes.sdui.core.state.SduiStateHolder
 
+/**
+ * Props: topBarTitle, topBarNavigationIconUrl (CDN URL), topBarNavigationIcon (name/key), showTopBar (bool).
+ * The navigation icon button uses topBarNavigationIcon (or "back" by default) as its contentDescription
+ * and dispatches Navigate(route=value) when tapped.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScaffoldRenderer(
@@ -29,9 +37,15 @@ fun ScaffoldRenderer(
     stateHolder: SduiStateHolder
 ) {
     val topBarTitle = component.stringProp("topBarTitle")
-    val topBarNavigationIcon = component.stringProp("topBarNavigationIcon")
+    val navIconUrl = component.stringProp("topBarNavigationIconUrl")
+    // topBarNavigationIcon can be a name/key like "back"; used as contentDescription & route
+    val navIconKey = component.stringProp("topBarNavigationIcon")
     val showTopBar = component.booleanProp("showTopBar", false)
     val onAction = LocalSduiActionHandler.current
+
+    // Show nav icon if either a URL or a key is provided
+    val hasNavIcon = navIconUrl.isNotEmpty() || navIconKey.isNotEmpty()
+    val navIconDesc = navIconKey.ifEmpty { "back" }
 
     Scaffold(
         modifier = modifier,
@@ -40,14 +54,28 @@ fun ScaffoldRenderer(
                 TopAppBar(
                     title = { Text(topBarTitle) },
                     navigationIcon = {
-                        if (topBarNavigationIcon.isNotEmpty()) {
-                            IconButton(onClick = {
-                                onAction(SduiActionDto(type = "Navigate", route = "back"))
-                            }) {
-                                Icon(
-                                    imageVector = resolveScaffoldIcon(topBarNavigationIcon),
-                                    contentDescription = topBarNavigationIcon
-                                )
+                        if (hasNavIcon) {
+                            IconButton(
+                                onClick = {
+                                    onAction(SduiActionDto(type = "Navigate", route = navIconDesc))
+                                }
+                            ) {
+                                if (navIconUrl.isNotEmpty()) {
+                                    AsyncImage(
+                                        model = navIconUrl,
+                                        contentDescription = navIconDesc,
+                                        modifier = Modifier.padding(4.dp),
+                                        contentScale = ContentScale.Fit,
+                                        colorFilter = ColorFilter.tint(Color.White)
+                                    )
+                                } else {
+                                    // No image URL — render an accessible placeholder
+                                    androidx.compose.foundation.layout.Box(
+                                        modifier = Modifier
+                                            .padding(4.dp)
+                                            .semantics { contentDescription = navIconDesc }
+                                    )
+                                }
                             }
                         }
                     }
@@ -61,11 +89,4 @@ fun ScaffoldRenderer(
             }
         }
     }
-}
-
-private fun resolveScaffoldIcon(name: String) = when (name.lowercase()) {
-    "arrowback", "arrow_back", "back" -> androidx.compose.material.icons.Icons.Default.ArrowBack
-    "menu" -> androidx.compose.material.icons.Icons.Default.Menu
-    "close" -> androidx.compose.material.icons.Icons.Default.Close
-    else -> androidx.compose.material.icons.Icons.Default.ArrowBack
 }

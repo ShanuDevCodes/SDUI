@@ -48,7 +48,6 @@ kotlin {
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material)
-            implementation(libs.compose.material.icons)
             implementation(libs.compose.material3)
             implementation(libs.compose.ui)
             implementation(libs.compose.components.resources)
@@ -71,6 +70,7 @@ kotlin {
             // Coil for image loading
             implementation(libs.coil.compose)
             implementation(libs.coil.network)
+            implementation(libs.coil.svg)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

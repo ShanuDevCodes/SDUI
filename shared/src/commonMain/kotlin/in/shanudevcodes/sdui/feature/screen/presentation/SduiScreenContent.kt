@@ -109,6 +109,7 @@ private fun mapNodeToDto(node: `in`.shanudevcodes.sdui.feature.screen.domain.mod
             props["contentScale"] = kotlinx.serialization.json.JsonPrimitive(node.contentScale)
         }
         is `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiNode.IconNode -> {
+            props["url"] = kotlinx.serialization.json.JsonPrimitive(node.url)
             props["name"] = kotlinx.serialization.json.JsonPrimitive(node.name)
             props["tint"] = kotlinx.serialization.json.JsonPrimitive(node.tint)
         }
@@ -198,7 +199,11 @@ private fun mapNodeToDto(node: `in`.shanudevcodes.sdui.feature.screen.domain.mod
             node.compareValueStr?.let { props["compareValue"] = json.parseToJsonElement(it) }
         }
         is `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiNode.SpacerNode -> {}
-        is `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiNode.FallbackNode -> {}
+        is `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiNode.FallbackNode -> {
+            // Emit the original type so custom components registered via SduiEngine.registerComponent() render correctly
+            props.putAll(node.originalProps)
+            node.originalActions.forEach { (key, action) -> actions[key] = mapActionToDto(action) }
+        }
         is `in`.shanudevcodes.sdui.feature.screen.domain.model.SduiNode.ScaffoldNode -> {
             props["topBarTitle"] = kotlinx.serialization.json.JsonPrimitive(node.topBarTitle)
             props["topBarNavigationIcon"] = kotlinx.serialization.json.JsonPrimitive(node.topBarNavigationIcon)

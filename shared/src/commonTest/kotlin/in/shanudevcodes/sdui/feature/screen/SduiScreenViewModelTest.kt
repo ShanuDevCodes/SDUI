@@ -7,6 +7,7 @@ import `in`.shanudevcodes.sdui.feature.screen.presentation.SduiScreenViewModel
 import `in`.shanudevcodes.sdui.testing.FakeScreenRepository
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -47,4 +48,25 @@ class SduiScreenViewModelTest {
         val errorState = viewModel.uiState.value as SduiScreenUiState.Error
         assertEquals("Network error", errorState.message)
     }
+
+    @Test
+    fun testViewModel_preservesInitialStateInUiState() = runTest {
+        val testDispatcher = UnconfinedTestDispatcher()
+        val definition = ScreenDefinition(
+            screenId = "home",
+            schemaVersion = "1.0",
+            title = "Home",
+            root = SduiNode.SpacerNode(emptyList()),
+            initialState = mapOf("username" to kotlinx.serialization.json.JsonPrimitive("testUser"))
+        )
+        val repository = FakeScreenRepository().apply {
+            registerScreen("home", definition)
+        }
+        val viewModel = SduiScreenViewModel("home", repository, testDispatcher)
+
+        assertTrue(viewModel.uiState.value is SduiScreenUiState.Success)
+        val successState = viewModel.uiState.value as SduiScreenUiState.Success
+        assertEquals("testUser", successState.definition.initialState["username"]?.jsonPrimitive?.content)
+    }
 }
+
