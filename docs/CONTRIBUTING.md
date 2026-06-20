@@ -22,9 +22,9 @@ Thank you for contributing. This document is **mandatory reading** before writin
 ## 3. Architecture rules (non-negotiable)
 
 ### Feature structure
-Every feature **must** follow this package layout inside the `shared` module:
+Every feature **must** follow this package layout inside the `:sdui` library module:
 ```
-shared/src/commonMain/kotlin/in/shanudevcodes/sdui/feature/<name>/
+sdui/src/commonMain/kotlin/in/shanudevcodes/sdui/feature/<name>/
 ├── domain/
 │   ├── model/          # Pure Kotlin data classes only — no Room/Ktor/Android/JVM imports
 │   ├── repository/     # Interfaces only — no implementations
@@ -124,7 +124,7 @@ Every PR must include tests covering what was added or changed:
 
 ### How to write tests
 
-- **Test location**: `shared/src/commonTest/kotlin/in/shanudevcodes/sdui/`
+- **Test location**: `sdui/src/commonTest/kotlin/in/shanudevcodes/sdui/`
 - **Use fakes** — do not create platform-specific mocks in commonTest that break multiplatform targets
 - **Inject `TestDispatcher`** via the `dispatcher` constructor param in ViewModels
 - **No real I/O** — use `FakeRepository`, mock HTTP clients, etc.
@@ -132,7 +132,7 @@ Every PR must include tests covering what was added or changed:
 
 ### Run before pushing
 ```bash
-./gradlew :shared:jvmTest
+./gradlew :sdui:jvmTest
 ```
 All existing tests must still pass. New tests must pass.
 
@@ -160,7 +160,7 @@ All existing tests must still pass. New tests must pass.
 Before requesting review, verify every item:
 
 - [ ] `./gradlew compileKotlinMetadata` is green
-- [ ] `./gradlew :shared:jvmTest` is green
+- [ ] `./gradlew :sdui:jvmTest` is green
 - [ ] **New/changed code has tests** — mapper, repository, use case, ViewModel, and Compose UI as applicable
 - [ ] No network DTO or database entity imports in any `presentation/` file
 - [ ] New feature has: domain model, repository interface, mapper, DI module, mapper test

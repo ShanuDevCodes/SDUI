@@ -1,5 +1,4 @@
 rootProject.name = "SDUI"
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
@@ -35,3 +34,4 @@ plugins {
 include(":androidApp")
 include(":desktopApp")
 include(":shared")
+include(":sdui")
