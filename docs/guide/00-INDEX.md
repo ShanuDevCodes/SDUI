@@ -16,6 +16,7 @@ If you are new, read in order. If you are looking something up, jump to the rele
 | 08 | [Navigation](./08-navigation.md) | `SduiRoute`, `NavBackStack`, params, back handling |
 | 09 | [Security & configuration](./09-security-and-config.md) | `SduiConfig`, memory-only model, headers, interceptors |
 | 10 | [Troubleshooting](./10-troubleshooting.md) | Validation failures, fallback screen, common errors |
+| 11 | [Recipes & cookbook](./11-recipes.md) | Complete copy-pasteable screen examples for common patterns |
 
 ---
 

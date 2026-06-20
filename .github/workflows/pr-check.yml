@@ -2,9 +2,9 @@ name: PR Check (fast signal)
 
 on:
   pull_request:
-    branches: [ main, master, develop ]
+    branches: [ main, master, develop, devlopment ]
   push:
-    branches: [ main, master, develop ]
+    branches: [ main, master, develop, devlopment ]
 
 jobs:
   build-and-test:
@@ -25,7 +25,7 @@ jobs:
           cache: gradle
 
       - name: Build (Android + Desktop + compile check)
-        run: ./gradlew compileKotlinMetadata :androidApp:compileDebugKotlin :desktopApp:compileKotlin --console=plain
+        run: ./gradlew :sdui:compileKotlinJvm :androidApp:compileDebugKotlin :desktopApp:compileKotlin --console=plain
 
-      - name: Run commonTest (desktop JVM — fast)
-        run: ./gradlew :shared:jvmTest --console=plain
+      - name: Run engine tests (JVM)
+        run: ./gradlew :sdui:jvmTest --console=plain

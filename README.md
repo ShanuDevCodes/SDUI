@@ -28,6 +28,7 @@ back to a native error screen instead of crashing the host app.
 - [Security](#security)
 - [Project structure](#project-structure)
 - [Building & testing](#building--testing)
+- [Documentation](#documentation)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
@@ -545,6 +546,14 @@ python -m http.server 8085 --directory server
 
 Then set `baseUrl` to your machine's address (the included demo uses `http://<host>:8085/`) and run a
 sample app. Screens resolve from `server/sdui/screens/<screenId>.json`.
+
+---
+
+## Documentation
+
+For in-depth, developer-focused documentation, see the **[developer guide](./docs/guide/00-INDEX.md)** —
+getting started, full JSON schema reference, component/modifier/action references, theming, custom
+components, navigation, security, troubleshooting, and a recipes cookbook.
 
 ---
 

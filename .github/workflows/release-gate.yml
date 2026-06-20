@@ -17,7 +17,7 @@ jobs:
           cache: gradle
       - name: Make gradlew executable
         run: chmod +x gradlew
-      - run: ./gradlew compileKotlinMetadata :androidApp:compileDebugKotlin :desktopApp:compileKotlin :shared:jvmTest --console=plain
+      - run: ./gradlew :sdui:compileKotlinJvm :androidApp:compileDebugKotlin :desktopApp:compileKotlin :sdui:jvmTest --console=plain
 
   build-and-test-ios:
     name: iOS simulator (iOS test)
@@ -31,4 +31,4 @@ jobs:
           cache: gradle
       - name: Make gradlew executable
         run: chmod +x gradlew
-      - run: ./gradlew :shared:iosSimulatorArm64Test --console=plain
+      - run: ./gradlew :sdui:iosSimulatorArm64Test --console=plain
