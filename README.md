@@ -1,16 +1,21 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Desktop (JVM).
+This is a Kotlin Multiplatform project targeting Android, iOS, Desktop (JVM). It is structured as a
+**publishable SDUI library** plus a set of sample apps that demonstrate it.
 
-* [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+### Modules
 
-* [/shared](./shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./shared/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./shared/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./shared/src/jvmMain/kotlin)
-    folder is the appropriate location.
+* **`/sdui`** — the publishable SDUI engine library (Server-Driven UI for Compose Multiplatform).
+  Contains the `core/`, `feature/`, and `navigation/` packages. This is the artifact consumers depend on.
+  It carries no hardcoded URLs and registers no demo components.
+
+* **`/shared`** — demo/sample shared Compose UI (`App.kt`, `SduiBannerCard.kt`) used by all three sample
+  apps. Depends on and re-exports `:sdui` so the iOS `Shared.framework` keeps working.
+
+* [/iosApp](./iosApp/iosApp) contains the iOS sample application entry point (SwiftUI host).
+
+* `/androidApp`, `/desktopApp` — Android and Desktop (JVM) sample app entry points.
+
+> Note: the engine sources historically lived under `/shared`; they are being moved to the dedicated
+> `/sdui` library module as part of the library-readiness work (see `docs/work/09-LIBRARY_AUDIT.md`).
 
 ### Running the apps
 
@@ -24,11 +29,11 @@ Use the run configurations provided by the run widget in your IDE's toolbar. You
 
 ### Running tests
 
-Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
+Use the run button in your IDE's editor gutter, or run tests using Gradle tasks (library tests live in `:sdui`):
 
-- Android tests: `./gradlew :shared:testAndroidHostTest`
-- Desktop tests: `./gradlew :shared:jvmTest`
-- iOS tests: `./gradlew :shared:iosSimulatorArm64Test`
+- Android tests: `./gradlew :sdui:testAndroidHostTest`
+- Desktop tests: `./gradlew :sdui:jvmTest`
+- iOS tests: `./gradlew :sdui:iosSimulatorArm64Test`
 
 ---
 
